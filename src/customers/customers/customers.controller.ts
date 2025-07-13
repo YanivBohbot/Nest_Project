@@ -59,7 +59,6 @@ export class CustomersController {
     return this.customerservice.getCustomers();
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:username')
   getByUsername(@Param('username') username: string) {
     const user = this.userService.getUserbyUsername(username);
