@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpException,
@@ -9,6 +10,7 @@ import {
   Post,
   Req,
   Res,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { CustomersService } from './customers.service';
 import { Request, Response } from 'express';
 import { CreateCustomerDTO } from '../dtos/CreateCustomerDTO';
 import { UsersService } from 'src/users/users/users.service';
+import { SerializeUser } from 'src/users/users/Users';
 
 @Controller('customers')
 export class CustomersController {
@@ -56,10 +59,11 @@ export class CustomersController {
     return this.customerservice.getCustomers();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:username')
   getByUsername(@Param('username') username: string) {
     const user = this.userService.getUserbyUsername(username);
-    if (user) return user;
+    if (user) return new SerializeUser(user);
     else throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
   }
 }
