@@ -15,10 +15,14 @@ import {
 import { CustomersService } from './customers.service';
 import { Request, Response } from 'express';
 import { CreateCustomerDTO } from '../dtos/CreateCustomerDTO';
+import { UsersService } from 'src/users/users/users.service';
 
 @Controller('customers')
 export class CustomersController {
-  constructor(private customerservice: CustomersService) {}
+  constructor(
+    private customerservice: CustomersService,
+    private userService: UsersService,
+  ) {}
 
   @Get(':id')
   getCustomer(
@@ -50,5 +54,12 @@ export class CustomersController {
   @Get('')
   GetAllCustomers() {
     return this.customerservice.getCustomers();
+  }
+
+  @Get('/:username')
+  getByUsername(@Param('username') username: string) {
+    const user = this.userService.getUserbyUsername(username);
+    if (user) return user;
+    else throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
   }
 }
